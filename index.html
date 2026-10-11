@@ -189,7 +189,7 @@ body{background-attachment:scroll}
 // Preencha com os valores e links de Relações Internacionais.
 // Configure os links oficiais desta oferta nos campos checkout abaixo.
 const OFERTA = {
-  essencial: { preco: 'R$ 10,00', checkout: '' },
+  essencial: { preco: 'R$ 10,00', checkout: 'https://go.perfectpay.com.br/PPU38CQGUJC' },
   completo: { preco: 'R$ 27,90', checkout: '' },
   promocional: { preco: 'R$ 17,00', checkout: '' }
 };
@@ -225,9 +225,8 @@ document.getElementById('upgrade-accept').addEventListener('click', () => {
   comprar('promocional');
 });
 document.getElementById('upgrade-decline').addEventListener('click', () => {
-  const pagePosition = { top: window.scrollY, left: window.scrollX };
   upgradeModal.close();
-  requestAnimationFrame(() => window.scrollTo({ ...pagePosition, behavior: 'instant' }));
+  comprar('essencial');
 });
 upgradeModal.addEventListener('close', () => { document.body.style.overflow = previousOverflow; });
 document.querySelectorAll('.sample').forEach(btn => {
