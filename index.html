@@ -183,7 +183,7 @@ body{background-attachment:scroll}
 <div class="upgrade-pricing"><s>R$ 27,90</s><strong>Por R$ 17,00</strong></div><img class="upgrade-product-image" src="assets/capa-plano-completo-transparente.webp" alt="Plano Completo com mapas mentais, três materiais complementares e certificado" width="800" height="533" loading="lazy" decoding="async">
 <ul class="ticks"><li>Todos os mapas mentais do Plano Básico</li><li>Dicionário Visual de Geopolítica</li><li>Atlas dos Conflitos Mundiais</li><li>Guia das Organizações Internacionais</li><li>Certificado Digital de Conclusão</li></ul></div>
 <button class="btn" id="upgrade-accept" type="button">COMPRAR O COMPLETO POR R$ 17,00</button>
-<button class="upgrade-decline" id="upgrade-decline" type="button">COMPRAR O BÁSICO POR R$ 10,00</button>
+<button class="upgrade-decline" id="upgrade-decline" type="button">Não, quero continuar com o Básico por R$ 10,00</button>
 </dialog><dialog id="purchase" aria-labelledby="purchase-title"><button class="close" type="button" aria-label="Fechar">×</button><h2 id="purchase-title">Oferta em preparação</h2><p>O link de compra deste plano ainda não foi configurado. Os detalhes serão apresentados quando a oferta estiver definida.</p></dialog>
 <script>
 // Preencha com os valores e links de Relações Internacionais.
@@ -199,6 +199,8 @@ document.querySelectorAll('[data-price]').forEach(el => {
 });
 const upgradeModal = document.getElementById('upgrade-modal');
 let previousOverflow = '';
+let basicOfferDeclined = false;
+let upgradePosition = { top: 0, left: 0 };
 function comprar(plano) {
   const url = OFERTA[plano].checkout;
   if (!url) return document.getElementById('purchase').showModal();
@@ -212,7 +214,8 @@ function comprar(plano) {
 }
 document.querySelectorAll('[data-checkout]').forEach(btn => {
   btn.addEventListener('click', () => {
-    if (btn.dataset.checkout === 'essencial') {
+    if (btn.dataset.checkout === 'essencial' && !basicOfferDeclined) {
+      upgradePosition = { top: window.scrollY, left: window.scrollX };
       previousOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
       return upgradeModal.showModal();
@@ -225,8 +228,11 @@ document.getElementById('upgrade-accept').addEventListener('click', () => {
   comprar('promocional');
 });
 document.getElementById('upgrade-decline').addEventListener('click', () => {
+  basicOfferDeclined = true;
+  document.querySelector('[data-checkout="essencial"]').textContent = 'COMPRAR O PLANO BÁSICO';
   upgradeModal.close();
-  comprar('essencial');
+  document.body.style.overflow = previousOverflow;
+  requestAnimationFrame(() => window.scrollTo({ ...upgradePosition, behavior: 'instant' }));
 });
 upgradeModal.addEventListener('close', () => { document.body.style.overflow = previousOverflow; });
 document.querySelectorAll('.sample').forEach(btn => {
